@@ -1,0 +1,11 @@
+{
+  "name": "The Resonance Game",
+  "description": "A sandbox environment for interactive character-driven roleplay and conversation using The Resonance Forge.",
+  "settings": {
+    "genre": "Fantasy/Science Fiction",
+    "world_rules": [
+      "Magic and advanced technology coexist.",
+      "Player choices influence the narrative."
+    ]
+  }
+}
