@@ -144,6 +144,24 @@
 - Always prefer DRY for schema, field, and LLM prompt definitions.
 - All user actions that affect data integrity (archival, variant creation, resolving conflicts) must be explicit and confirmed before changes are committed.
 
+### 8.1 Safe Filename Encoding and Profanity (Scunthorpe) Filtering
+
+- All generated filenames (for characters, worlds, conversations, audio, images, etc.) must use a safe, human-friendly encoding:
+  - Use a restricted, case-insensitive, non-confusable 32-character set (base32) for any encoded UUID or hash segments.
+  - The encoding uses a modified Crockford-like Base32 alphabet, with 'S' removed and 'U' added, to avoid confusables and maximize safety.
+  - Only allow alphanumeric and a limited set of safe characters in filenames.
+  - Filenames must be compatible with all major filesystems and avoid reserved or problematic characters.
+- Filenames must be checked for accidental or offensive substrings (the "Scunthorpe problem"):
+  - Before finalizing any filename, run a substring filter using the list in `profanity_substring_filter_list.txt`.
+  - If a generated filename contains any banned/profane substring (case-insensitive), regenerate or alter the filename until it passes the filter.
+  - This applies to all automatically generated or user-suggested filenames, including those for conversation logs, audio, images, and prompt files.
+- The substring filter must be applied after all encoding and before writing any file to disk.
+- The filter list is maintained in `profanity_substring_filter_list.txt` and can be updated as needed to cover new edge cases.
+- This ensures that all filenames are safe, professional, and free from accidental profanity or offensive content, even in edge cases.
+- User-generated names are permitted, provided they do not attempt to mimic or plausibly resemble program-generated names (e.g., do not use the same format as auto-generated filenames).
+- All user-given names are stored inside the file at runtime, along with a timestamp of when each name was provided.
+- The list of user-given names (with timestamps) is considered personal data and must be included in the data to be stripped by the anonymization script.
+
 ---
 
 ## 9. LLM-Driven Functionality: Consolidation & Flow
