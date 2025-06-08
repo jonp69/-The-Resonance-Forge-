@@ -239,4 +239,21 @@
 - The system supports triggering these actions, and their effects are reflected in the conversation state and saved in the conversation file.
 - Environment-dependent actions and their effects are supported, allowing for dynamic and context-sensitive interactions.
 
+### 13.5 Conversation Tree, Alternatives, and Branching
+
+- The conversation system stores all messages and their alternatives as a tree structure, not just a linear log.
+- When a message is remade/rerun, the new result is stored as an alternative branch, preserving the original and all previous alternatives.
+- Users can navigate the full conversation tree, view all branches, and select any branch as the active path for further conversation.
+- Undoing to a previous message removes all subsequent messages and branches from the active path, but preserves them in the tree for future navigation or restoration.
+- All metadata (LLM, users, characters, audio, etc.) is preserved for each message and branch.
+- This enables robust exploration, replay, and editing of conversations, supporting creative and non-linear storytelling or debugging.
+
+### 13.6 Audio, Images, and Multimedia Features
+
+- The conversation system supports associating images (e.g., avatars, scene art) with users, characters, and environments. Images can be displayed in the GUI alongside messages or in dedicated panels.
+- Audio features (such as TTS, sound effects, and music) are modular and can be enabled or disabled at runtime. Audio generation requests can be queued and processed in batch mode for deferred TTS/audio creation.
+- Each message or action can have an associated audio file (e.g., TTS output, sound effect), and the system supports playback of these files during conversation or in a dedicated conversation playback mode.
+- The GUI provides controls for toggling audio features, playing back the conversation, and managing multimedia assets.
+- All multimedia associations (images, audio paths, etc.) are stored in the conversation tree metadata for each message, branch, and action, but are not required for basic text-based operation.
+
 ---
