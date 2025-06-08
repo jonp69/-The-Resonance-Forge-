@@ -9,11 +9,84 @@ from PySide6.QtCore import Qt
 from prompt_loader import Environment, Character
 from llm_interface import LLMInterface
 
+class DebugConsole(QTextEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setReadOnly(True)
+        self.setMinimumHeight(100)
+        self.setPlaceholderText("Debug console output...")
+    def log(self, message):
+        self.append(message)
+
+class MissingFileWorkflowDialogWidget(QWidget):
+    def __init__(self, debug_console):
+        super().__init__()
+        self.debug_console = debug_console
+        layout = QVBoxLayout(self)
+        self.label = QLabel("Missing required prompt file. Choose an option:")
+        layout.addWidget(self.label)
+        btn_layout = QHBoxLayout()
+        self.btn_a = QPushButton("Synthesize with LLM")
+        self.btn_b = QPushButton("Manual LLM Prompt")
+        self.btn_c = QPushButton("Import File")
+        self.btn_d = QPushButton("Cancel")
+        for btn in [self.btn_a, self.btn_b, self.btn_c, self.btn_d]:
+            btn_layout.addWidget(btn)
+        layout.addLayout(btn_layout)
+        self.status = QLabel()
+        layout.addWidget(self.status)
+        self.btn_a.clicked.connect(lambda: self.handle_choice("A"))
+        self.btn_b.clicked.connect(lambda: self.handle_choice("B"))
+        self.btn_c.clicked.connect(lambda: self.handle_choice("C"))
+        self.btn_d.clicked.connect(lambda: self.handle_choice("D"))
+
+    def handle_choice(self, choice):
+        if choice == "A":
+            msg = "[Workflow] Gathering context and available LLMs for assisted synthesis..."
+        elif choice == "B":
+            msg = "[Workflow] Generating prompt and context for manual LLM use..."
+        elif choice == "C":
+            msg = "[Workflow] Please select a prompt file to import."
+        elif choice == "D":
+            msg = "[Workflow] Cancelled. Please select or create another prompt."
+        else:
+            msg = "[Workflow] Invalid option. Please try again."
+        self.status.setText(msg)
+        self.debug_console.log(msg)
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("The Resonance Forge Roleplay Engine")
+        self.setWindowTitle("Resonance Forge")
         self.resize(900, 600)
+        central = QWidget()
+        self.setCentralWidget(central)
+        layout = QVBoxLayout(central)
+        # Top navigation bar
+        nav = QHBoxLayout()
+        self.btn_missing_file = QPushButton("Missing File Workflow")
+        self.btn_prompt_review = QPushButton("Prompt Review (Coming Soon)")
+        self.btn_conflict_handling = QPushButton("Conflict Handling (Coming Soon)")
+        nav.addWidget(self.btn_missing_file)
+        nav.addWidget(self.btn_prompt_review)
+        nav.addWidget(self.btn_conflict_handling)
+        nav.addStretch()
+        layout.addLayout(nav)
+        # Central workflow area
+        from PySide6.QtWidgets import QStackedWidget
+        self.stack = QStackedWidget()
+        layout.addWidget(self.stack, 1)
+        # Debug console
+        self.debug_console = DebugConsole()
+        layout.addWidget(QLabel("Debug Console:"))
+        layout.addWidget(self.debug_console)
+        # Add workflow widgets
+        self.missing_file_widget = MissingFileWorkflowDialogWidget(self.debug_console)
+        self.stack.addWidget(self.missing_file_widget)
+        # Navigation actions
+        self.btn_missing_file.clicked.connect(lambda: self.stack.setCurrentWidget(self.missing_file_widget))
+        # Default view
+        self.stack.setCurrentWidget(self.missing_file_widget)
 
         self.environment = None
         self.characters = []

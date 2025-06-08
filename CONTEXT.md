@@ -167,3 +167,76 @@
 ## 10. Changelog
 
 - **2025-06-08:** Integrated UUID/variant/duplicate logic, folder/file conventions, migration/legacy handling, and detailed LLM workflow modularization.
+
+---
+
+## 11. User Interface Architecture (PySide6)
+
+### 11.1 GUI and Backend Separation
+- The user interface is implemented using PySide6 (Qt for Python).
+- All business logic, data processing, and workflows are kept in backend modules (e.g., `resonance_forge/`), with no direct UI dependencies.
+- Each major backend module (LLM, metadata, workflows, etc.) may have a corresponding `gui_*.py` file or submodule for its UI components, but GUI and backend logic must remain decoupled.
+- Communication between GUI and backend is via signals/slots, controller classes, or other clean interfaces.
+
+### 11.2 Debug Console
+- A parallel debug console is always available in the GUI for superuser access, internal state monitoring, and advanced debugging.
+- The debug console can display logs, internal state, and allow for direct command input for power users.
+- This enables advanced troubleshooting and development without overcomplicating the main user interface.
+
+### 11.3 UI/UX Principles
+- The GUI should be intuitive and user-friendly, with clear separation between normal user actions and advanced/superuser features.
+- All user-facing workflows (e.g., missing file resolution, prompt review, conflict handling) are accessible via the GUI.
+- The CLI interface may be retained for debugging, scripting, or headless operation, but the primary user experience is through the PySide6 GUI.
+
+---
+
+## 12. Core vs. Supporting Features in the GUI
+
+### 12.1 Central Features (Core UX)
+
+- The primary purpose of the GUI is to:
+  - Allow the user to select and configure a local LLM backend (Ollama or LM Studio).
+  - Let the user choose the number of users and roleplay characters, and select master prompts for each character.
+  - Display and manage a conversation between users and roleplay characters, with clear message attribution.
+  - Provide input fields for users to send messages as themselves or as a character.
+  - Offer controls to start, pause, and reset the conversation.
+- These features are always visible and form the main workflow of the application.
+
+### 12.2 Supporting/Robustness Features
+
+- Additional workflows (e.g., missing file resolution, prompt review, conflict handling) are available as modular dialogs or panels, but are not central to the main user flow.
+- A debug console is available for superuser/internal state monitoring and troubleshooting, but is not the main focus for regular users.
+- The GUI is designed so that robustness features enhance user satisfaction and reliability, but do not distract from the core conversation experience.
+
+---
+
+## 13. Conversation-Centric GUI and Dynamic State Management
+
+### 13.1 Conversation as the Central Element
+- The conversation log and message input are always visible and central in the GUI.
+- LLM model selection, user/character management, and other settings are accessible via a sidebar, drawer, or modal, so they do not block or interrupt the conversation view.
+- Users can change the LLM model or add/remove users/characters at any time, even mid-conversation.
+
+### 13.2 Per-Interaction Registry
+- Each message in the conversation log records:
+  - Which LLM model was used for that interaction.
+  - Which users and roleplay characters were present at that moment.
+- This enables full traceability and reproducibility of the conversation.
+
+### 13.3 Dynamic User/Character Management
+- Users and characters can be added or removed at any time during the conversation.
+- The current state (active users/characters) is checked and displayed at every interaction.
+- The system ensures that all interactions are consistent with the current set of users/characters and the selected LLM.
+
+### 13.4 Conversation Save File Metadata and Action System
+
+- Each message/interaction in the saved conversation file includes metadata:
+  - The LLM model used for that message
+  - The users and roleplay characters present at that moment
+- This metadata is for traceability and reproducibility, and is not displayed in the main conversation UI.
+- Users and characters can have preset actions (e.g., join, leave, custom actions), which may be triggered at any time.
+- Environments (ambients) can also define actions, and these may affect or be affected by user/character actions.
+- The system supports triggering these actions, and their effects are reflected in the conversation state and saved in the conversation file.
+- Environment-dependent actions and their effects are supported, allowing for dynamic and context-sensitive interactions.
+
+---
