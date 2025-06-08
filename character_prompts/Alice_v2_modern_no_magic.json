@@ -1,0 +1,15 @@
+{
+  "name": "Alice",
+  "version": "2.0",
+  "world_traits": ["modern", "urban", "no_magic", "high_tech"],
+  "compatible": ["modern", "no_magic"],
+  "incompatible": ["magic_only", "medieval"],
+  "conditional": ["steampunk"],
+  "tags": ["engineer", "inventor"],
+  "notes": "If used in steampunk, swap 'laser gun' for 'steam blaster'.",
+  "modifications": {
+    "steampunk": {
+      "description": "Replace modern tech with steam-powered gadgets."
+    }
+  }
+}
